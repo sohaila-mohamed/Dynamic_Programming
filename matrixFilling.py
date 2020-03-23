@@ -52,114 +52,88 @@ def global_seq_alignment(seq_1, seq_2, match_score, mismatch_score, gap_score):
     return filled_mat
 
 
-def backtracking(matrix, row, col, match, misMatch, gap, seq1, seq2, path=[],path1=[], path2=[],arrows=[], flag=False):
-    if (row == 1 or col == 1):
-        if (matrix[row][col] != 0):
-
+def backtracking(matrix, row, col, match, misMatch, gap, seq1, seq2, cell_path=[], seq1_path=[], seq2_path=[], arrows=[], visited=False):
+    if row == 1 or col == 1:
+        if matrix[row][col] != 0:
             return
         else:
-            print("(end at )")
-            print("end path", path)
-            print("path1",path1)
-            print("arrows",arrows)
-            print("path2",path2)
-
+            print("end cell_path", cell_path)
+            print(seq1_path)
+            print(arrows)
+            print(seq2_path)
             return
+
     # up
+    if matrix[row][col] - gap == matrix[row - 1][col]:
 
-    if (matrix[row][col] - gap == matrix[row - 1][col]):
-        print("go up ", matrix[row][col])
-        path.append(matrix[row][col])
-        path1.append(seq1[col - 1])
-        path2.append("_")
+        cell_path.append(matrix[row][col])
+        seq1_path.append(seq1[col - 1])
+        seq2_path.append("_")
         arrows.append(" ")
-        # path1=path
-        print(seq1[col - 1])
-        print(seq2[row - 2])
-        print("Before path", path)
-        if (flag == True):
-            print("branching")
-            del path[path.index(matrix[row][col]):len(path) - 1]
-            del path1[path.index(matrix[row][col]):len(path1) - 1]
-            del path2[path.index(matrix[row][col]):len(path2) - 1]
-            del arrows[path.index(matrix[row][col]):len(arrows) - 1]
-            print("after path", path)
 
-        backtracking(matrix, row - 1, col, match, misMatch, gap, seq1, seq2,path,path1,path2,arrows,False)
+        if visited == True:
 
-        flag = True
+            del cell_path[cell_path.index(matrix[row][col]):len(cell_path) - 1]
+            del seq1_path[cell_path.index(matrix[row][col]):len(seq1_path) - 1]
+            del seq2_path[cell_path.index(matrix[row][col]):len(seq2_path) - 1]
+            del arrows[cell_path.index(matrix[row][col]):len(arrows) - 1]
+
+
+        backtracking(matrix, row - 1, col, match, misMatch, gap, seq1, seq2, cell_path, seq1_path, seq2_path, arrows, False)
+
+        visited = True
 
     # left
-    if (matrix[row][col] - gap == matrix[row][col - 1]):
-        print("Go left", matrix[row][col])
-        path.append(matrix[row][col])
-        path1.append(seq1[col - 2])
-        path2.append("_")
+    if matrix[row][col] - gap == matrix[row][col - 1]:
+        cell_path.append(matrix[row][col])
+        seq1_path.append(seq1[col - 2])
+        seq2_path.append("_")
         arrows.append(" ")
-        print(seq1[col - 2])
-        print(seq2[row - 2])
-        print("Before path", path)
-        if (flag == True):
-            print("branching")
-            del path[path.index(matrix[row][col]):len(path) - 1]
-            del path1[path.index(matrix[row][col]):len(path1) - 1]
-            del path2[path.index(matrix[row][col]):len(path2) - 1]
-            del arrows[path.index(matrix[row][col]):len(arrows) - 1]
-            print("after path", path)
-            # path1=path
-        backtracking(matrix, row, col - 1, match, misMatch, gap, seq1, seq2,path,path1, path2,arrows,False)
+        if visited == True:
+            del cell_path[cell_path.index(matrix[row][col]):len(cell_path) - 1]
+            del seq1_path[cell_path.index(matrix[row][col]):len(seq1_path) - 1]
+            del seq2_path[cell_path.index(matrix[row][col]):len(seq2_path) - 1]
+            del arrows[cell_path.index(matrix[row][col]):len(arrows) - 1]
+        backtracking(matrix, row, col - 1, match, misMatch, gap, seq1, seq2, cell_path, seq1_path, seq2_path, arrows, False)
 
-        flag = True
+        visited = True
 
     # diagonal Match
-    if (seq1[col - 2] == seq2[row - 2]):
-        if (matrix[row][col] - match == matrix[row - 1][col - 1]):
-            print("Go diagonal match", matrix[row][col])
-            path.append(matrix[row][col])
-            path1.append(seq1[col - 2])
-            path2.append(seq2[row - 2])
+    if seq1[col - 2] == seq2[row - 2]:
+        if matrix[row][col] - match == matrix[row - 1][col - 1]:
+            cell_path.append(matrix[row][col])
+            seq1_path.append(seq1[col - 2])
+            seq2_path.append(seq2[row - 2])
             arrows.append("|")
-            print(seq1[col - 2])
-            print(seq2[row - 2])
-            print("Before path", path)
-            if (flag == True):
-                print("branching")
-                del path[path.index(matrix[row][col]):len(path) - 1]
-                del path1[path.index(matrix[row][col]):len(path1) - 1]
-                del path2[path.index(matrix[row][col]):len(path2) - 1]
-                del arrows[path.index(matrix[row][col]):len(arrows) - 1]
-                print("after path", path)
 
-                # path=path[:matrix[row][col]]
-            backtracking(matrix, row - 1, col - 1, match, misMatch, gap, seq1, seq2,path,path1, path2,arrows,False)
-            flag = True
+            if visited == True:
+                del cell_path[cell_path.index(matrix[row][col]):len(cell_path) - 1]
+                del seq1_path[cell_path.index(matrix[row][col]):len(seq1_path) - 1]
+                del seq2_path[cell_path.index(matrix[row][col]):len(seq2_path) - 1]
+                del arrows[cell_path.index(matrix[row][col]):len(arrows) - 1]
+            backtracking(matrix, row - 1, col - 1, match, misMatch, gap, seq1, seq2, cell_path, seq1_path, seq2_path, arrows, False)
+            visited = True
 
-        # diagonal Mismatch
+    # Diagonal misMatch
     else:
         if matrix[row][col] - misMatch == matrix[row - 1][col - 1]:
-            print("Go diagonal misMatch", matrix[row][col])
-            path.append(matrix[row][col])
-            path1.append(seq1[col - 2])
-            path2.append(seq2[row - 2])
+            cell_path.append(matrix[row][col])
+            seq1_path.append(seq1[col - 2])
+            seq2_path.append(seq2[row - 2])
             arrows.append(" ")
-            print(seq1[col - 2])
-            print(seq2[row - 2])
-            print("Before path", path)
-            if (flag == True):
-                print(" after branching")
-                del path[path.index(matrix[row][col]):len(path) - 1]
-                del path1[path.index(matrix[row][col]):len(path1) - 1]
-                del path2[path.index(matrix[row][col]):len(path2) - 1]
-                del arrows[path.index(matrix[row][col]):len(arrows) - 1]
-                print("after path", path)
-            backtracking(matrix, row - 1, col - 1, match, misMatch, gap, seq1, seq2,path,path1, path2,arrows,False)
-            flag = True
+            if visited == True:
+                del cell_path[cell_path.index(matrix[row][col]):len(cell_path) - 1]
+                del seq1_path[cell_path.index(matrix[row][col]):len(seq1_path) - 1]
+                del seq2_path[cell_path.index(matrix[row][col]):len(seq2_path) - 1]
+                del arrows[cell_path.index(matrix[row][col]):len(arrows) - 1]
+            backtracking(matrix, row - 1, col - 1, match, misMatch, gap, seq1, seq2, cell_path, seq1_path, seq2_path, arrows, False)
+            visited = True
 
-    flag = False
+    visited = False
 
 
-seq1 = 'GAATTCAGTTA'
-seq2 = 'GGATCGA'
+seq1 = 'CTATTGACGTAACAT'
+seq2 = 'CTATTGAACAT'
 m = 5
 mis = -3
 g = -4
